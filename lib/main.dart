@@ -28,7 +28,7 @@ class MartApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OrderProvider()),
       ],
       child: MaterialApp(
-        title: 'Mart App',
+        title: 'ABMART',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(

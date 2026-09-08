@@ -1,5 +1,5 @@
-name: mart_app
-description: "A Flutter app for managing a mart/grocery store."
+name: abmart
+description: "ABMART - Your favorite shopping destination. A Flutter app for managing a mart/grocery store."
 
 publish_to: 'none'
 

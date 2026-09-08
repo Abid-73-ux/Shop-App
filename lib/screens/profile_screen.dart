@@ -21,7 +21,7 @@ class ProfileScreen extends StatelessWidget {
             onPressed: () {
               AuthService().logOut();
               Navigator.pop(context);
-              Navigator.of(context).pushReplacementNamed('/sign-in');
+              Navigator.of(context).pushReplacementNamed('/login');
             },
             child: const Text('Log Out', style: TextStyle(color: Colors.red)),
           ),

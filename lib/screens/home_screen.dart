@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               AuthService().logOut();
               Navigator.pop(context);
-              Navigator.of(context).pushReplacementNamed('/sign-in');
+              Navigator.of(context).pushReplacementNamed('/login');
             },
             child: const Text('Log Out', style: TextStyle(color: Colors.red)),
           ),
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mart App'),
+        title: const Text('ABMART'),
         elevation: 0,
         actions: [
           Consumer<CartProvider>(

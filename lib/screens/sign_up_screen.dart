@@ -144,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Mart App',
+                          'ABMART',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,

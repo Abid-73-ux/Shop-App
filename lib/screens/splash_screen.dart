@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const SizedBox(height: 24),
             // App Name
             Text(
-              'Mart App',
+              'ABMART',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.green.shade700,

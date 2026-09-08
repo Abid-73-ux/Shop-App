@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/splash_screen.dart';
-import 'screens/sign_in_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/sign_up_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/order_confirmation_screen.dart';
@@ -40,7 +41,8 @@ class MartApp extends StatelessWidget {
         home: const SplashScreen(),
         routes: {
           '/splash': (context) => const SplashScreen(),
-          '/sign-in': (context) => const SignInScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/sign-up': (context) => const SignUpScreen(),
           '/home': (context) => const HomeScreen(),
           '/profile': (context) => const ProfileScreen(),
         },

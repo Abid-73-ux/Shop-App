@@ -16,11 +16,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _navigateToNextScreen() async {
+    // Initialize AuthService
+    await AuthService().init();
+    
     await Future.delayed(const Duration(seconds: 3));
     if (mounted) {
       final authService = AuthService();
-      // If user is logged in, go to home, otherwise go to sign-in
-      final route = authService.isLoggedIn ? '/home' : '/sign-in';
+      // If user is logged in, go to home, otherwise go to login
+      final route = authService.isLoggedIn ? '/home' : '/login';
       Navigator.of(context).pushReplacementNamed(route);
     }
   }

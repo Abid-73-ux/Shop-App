@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           PopupMenuButton(
-            itemBuilder: (context) => [
+            itemBuilder: (context) => <PopupMenuEntry<dynamic>>[
               PopupMenuItem(
                 child: Row(
                   children: [

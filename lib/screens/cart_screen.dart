@@ -1,9 +1,176 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
+import '../providers/order_provider.dart';
+import '../services/auth_service.dart';
+import '../models/order_model.dart';
+import 'order_confirmation_screen.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  late TextEditingController _addressController;
+  bool _isPlacingOrder = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _addressController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  void _showAddressDialog(BuildContext context, double totalAmount) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Delivery Address',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _addressController,
+                minLines: 3,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText:
+                      'Enter your complete delivery address',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => _placeOrder(context, totalAmount),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade600,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isPlacingOrder
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              'Place Order',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _placeOrder(BuildContext context, double totalAmount) async {
+    if (_addressController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter delivery address')),
+      );
+      return;
+    }
+
+    setState(() => _isPlacingOrder = true);
+
+    try {
+      final authService = AuthService();
+      final userEmail = authService.currentUser ?? 'user@example.com';
+      final cart = context.read<CartProvider>();
+      final orderProvider = context.read<OrderProvider>();
+
+      // Create order items
+      final orderItems = cart.items
+          .map((cartItem) => OrderItem(
+                productId: cartItem.product.id,
+                productName: cartItem.product.name,
+                productPrice: cartItem.product.price,
+                quantity: cartItem.quantity,
+              ))
+          .toList();
+
+      // Place order
+      final order = await orderProvider.placeOrder(
+        userEmail: userEmail,
+        items: orderItems,
+        totalAmount: totalAmount,
+        deliveryAddress: _addressController.text,
+      );
+
+      if (mounted) {
+        setState(() => _isPlacingOrder = false);
+        
+        // Clear cart
+        cart.clearCart();
+
+        // Navigate to confirmation screen
+        Navigator.of(context).pushReplacementNamed(
+          '/order-confirmation',
+          arguments: order,
+        );
+      }
+    } catch (e) {
+      setState(() => _isPlacingOrder = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +186,8 @@ class CartScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
+                  const Icon(Icons.shopping_cart_outlined,
+                      size: 80, color: Colors.grey),
                   const SizedBox(height: 16),
                   Text(
                     'Your cart is empty',
@@ -41,6 +209,9 @@ class CartScreen extends StatelessWidget {
               ),
             );
           }
+
+          final deliveryCharge = cart.totalPrice > 50 ? 0 : 5;
+          final finalTotal = cart.totalPrice + deliveryCharge;
 
           return Column(
             children: [
@@ -108,7 +279,9 @@ class CartScreen extends StatelessWidget {
                                       IconButton(
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
-                                        icon: const Icon(Icons.remove_circle_outline, size: 20),
+                                        icon: const Icon(
+                                            Icons.remove_circle_outline,
+                                            size: 20),
                                         onPressed: () {
                                           if (cartItem.quantity > 1) {
                                             cart.updateQuantity(
@@ -119,16 +292,20 @@ class CartScreen extends StatelessWidget {
                                         },
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
                                         child: Text(
                                           '${cartItem.quantity}',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                       IconButton(
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
-                                        icon: const Icon(Icons.add_circle_outline, size: 20),
+                                        icon: const Icon(
+                                            Icons.add_circle_outline,
+                                            size: 20),
                                         onPressed: () {
                                           cart.updateQuantity(
                                             cartItem.product.id,
@@ -140,7 +317,8 @@ class CartScreen extends StatelessWidget {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red, size: 20),
                                   onPressed: () {
                                     cart.removeFromCart(cartItem.product.id);
                                   },
@@ -157,7 +335,8 @@ class CartScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.grey[300]!)),
+                  border: Border(
+                      top: BorderSide(color: Colors.grey[300]!)),
                 ),
                 child: Column(
                   children: [
@@ -183,7 +362,7 @@ class CartScreen extends StatelessWidget {
                           style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                         Text(
-                          '\$${(cart.totalPrice > 50 ? 0 : 5).toStringAsFixed(2)}',
+                          '\$${deliveryCharge.toStringAsFixed(2)}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -200,7 +379,7 @@ class CartScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '\$${(cart.totalPrice + (cart.totalPrice > 50 ? 0 : 5)).toStringAsFixed(2)}',
+                          '\$${finalTotal.toStringAsFixed(2)}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -217,16 +396,8 @@ class CartScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           backgroundColor: Colors.green,
                         ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Order placed successfully!'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          cart.clearCart();
-                          Navigator.pop(context);
-                        },
+                        onPressed: () =>
+                            _showAddressDialog(context, finalTotal),
                         child: const Text(
                           'Proceed to Checkout',
                           style: TextStyle(

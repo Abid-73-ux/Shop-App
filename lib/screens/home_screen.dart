@@ -107,6 +107,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const PopupMenuDivider(),
               PopupMenuItem(
+                onTap: () {
+                  Navigator.of(context).pushNamed('/profile');
+                },
+                child: const Row(
+                  children: [
+                    Icon(Icons.account_circle, size: 20),
+                    SizedBox(width: 8),
+                    Text('My Profile'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
                 onTap: _showLogoutDialog,
                 child: const Row(
                   children: [

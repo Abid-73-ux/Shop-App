@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'sign_in_screen.dart';
+import '../services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -12,13 +12,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToSignIn();
+    _navigateToNextScreen();
   }
 
-  _navigateToSignIn() async {
+  _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/sign-in');
+      final authService = AuthService();
+      // If user is logged in, go to home, otherwise go to sign-in
+      final route = authService.isLoggedIn ? '/home' : '/sign-in';
+      Navigator.of(context).pushReplacementNamed(route);
     }
   }
 

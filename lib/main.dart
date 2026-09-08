@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/splash_screen.dart';
 import 'screens/sign_in_screen.dart';
-import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'providers/cart_provider.dart';
 import 'providers/product_provider.dart';
@@ -37,7 +36,6 @@ class MartApp extends StatelessWidget {
         routes: {
           '/splash': (context) => const SplashScreen(),
           '/sign-in': (context) => const SignInScreen(),
-          '/login': (context) => const LoginScreen(),
           '/home': (context) => const HomeScreen(),
         },
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/cart_provider.dart';
+import '../services/auth_service.dart';
 import 'cart_screen.dart';
 import 'product_detail_screen.dart';
 
@@ -21,8 +22,35 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Log Out'),
+        content: const Text('Are you sure you want to log out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              AuthService().logOut();
+              Navigator.pop(context);
+              Navigator.of(context).pushReplacementNamed('/sign-in');
+            },
+            child: const Text('Log Out', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+    final userName = authService.getUserDisplayName();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mart App'),
@@ -64,6 +92,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
               ],
             ),
+          ),
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Row(
+                  children: [
+                    const Icon(Icons.person, size: 20),
+                    const SizedBox(width: 8),
+                    Text(userName),
+                  ],
+                ),
+                enabled: false,
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                onTap: _showLogoutDialog,
+                child: const Row(
+                  children: [
+                    Icon(Icons.logout, size: 20),
+                    SizedBox(width: 8),
+                    Text('Log Out'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

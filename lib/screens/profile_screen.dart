@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import '../providers/order_provider.dart';
+import 'edit_profile_screen.dart';
+import 'notifications_screen.dart';
+import 'privacy_policy_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -187,9 +190,11 @@ class ProfileScreen extends StatelessWidget {
                     'Update your personal information',
                     Icons.edit,
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Edit profile feature coming soon')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen(),
+                        ),
                       );
                     },
                   ),
@@ -199,9 +204,12 @@ class ProfileScreen extends StatelessWidget {
                     'Manage order and delivery notifications',
                     Icons.notifications,
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Notifications settings coming soon')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const NotificationsScreen(),
+                        ),
                       );
                     },
                   ),
@@ -211,9 +219,12 @@ class ProfileScreen extends StatelessWidget {
                     'Read our privacy policy',
                     Icons.privacy_tip,
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Privacy policy coming soon')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const PrivacyPolicyScreen(),
+                        ),
                       );
                     },
                   ),

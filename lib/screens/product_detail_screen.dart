@@ -91,7 +91,7 @@ class ProductDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    '\$${product.price.toStringAsFixed(2)}',
+                    '\₹${product.price.toStringAsFixed(0)}',
                     style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,

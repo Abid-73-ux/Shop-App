@@ -210,7 +210,7 @@ class _CartScreenState extends State<CartScreen> {
             );
           }
 
-          final deliveryCharge = cart.totalPrice > 50 ? 0 : 5;
+          final deliveryCharge = cart.totalPrice > 5000 ? 0 : 50;
           final finalTotal = cart.totalPrice + deliveryCharge;
 
           return Column(
@@ -254,7 +254,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '\$${cartItem.product.price.toStringAsFixed(2)} each',
+                                    '\₹${cartItem.product.price.toStringAsFixed(0)} each',
                                     style: const TextStyle(
                                       color: Colors.green,
                                       fontWeight: FontWeight.bold,
@@ -262,7 +262,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Total: \$${cartItem.totalPrice.toStringAsFixed(2)}',
+                                    'Total: \₹${cartItem.totalPrice.toStringAsFixed(0)}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -348,7 +348,7 @@ class _CartScreenState extends State<CartScreen> {
                           style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                         Text(
-                          '\$${cart.totalPrice.toStringAsFixed(2)}',
+                          '\₹${cart.totalPrice.toStringAsFixed(0)}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -362,7 +362,7 @@ class _CartScreenState extends State<CartScreen> {
                           style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                         Text(
-                          '\$${deliveryCharge.toStringAsFixed(2)}',
+                          '\₹${deliveryCharge.toStringAsFixed(0)}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -379,7 +379,7 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                         Text(
-                          '\$${finalTotal.toStringAsFixed(2)}',
+                          '\₹${finalTotal.toStringAsFixed(0)}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

@@ -114,7 +114,7 @@ class ProfileScreen extends StatelessWidget {
                           _buildStatCard(
                             context,
                             'Total Spent',
-                            '\$${totalSpent.toStringAsFixed(2)}',
+                            '\₹${totalSpent.toStringAsFixed(0)}',
                             Icons.attach_money,
                             Colors.green,
                           ),
@@ -360,7 +360,7 @@ class ProfileScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               Text(
-                '\$${order.totalAmount.toStringAsFixed(2)}',
+                '\₹${order.totalAmount.toStringAsFixed(0)}',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.green.shade600,

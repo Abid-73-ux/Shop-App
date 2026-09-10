@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mart_app/main.dart';
+import 'package:abmart/main.dart';
 
 void main() {
   testWidgets('MartApp smoke test', (WidgetTester tester) async {

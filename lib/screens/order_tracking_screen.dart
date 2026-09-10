@@ -17,7 +17,7 @@ class OrderTrackingScreen extends StatefulWidget {
 }
 
 class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
-  late GoogleMapController _mapController;
+  GoogleMapController? _mapController;
   final LocationService _locationService = LocationService();
   
   LatLng? _currentLocation;
@@ -134,16 +134,16 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
   }
 
   void _moveToCurrentLocation() async {
-    if (_currentLocation != null && _mapController != null) {
-      _mapController.animateCamera(
+    if (_currentLocation != null) {
+      _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(_currentLocation!, 15),
       );
     }
   }
 
   void _moveToDeliveryLocation() async {
-    if (_deliveryLocation != null && _mapController != null) {
-      _mapController.animateCamera(
+    if (_deliveryLocation != null) {
+      _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(_deliveryLocation!, 15),
       );
     }
@@ -151,6 +151,18 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
 
   void _showBothLocations() async {
     if (_currentLocation != null && _deliveryLocation != null) {
+      final double latDiff =
+          (_currentLocation!.latitude - _deliveryLocation!.latitude).abs();
+      final double lngDiff =
+          (_currentLocation!.longitude - _deliveryLocation!.longitude).abs();
+
+      if (latDiff < 0.0001 && lngDiff < 0.0001) {
+        _mapController?.animateCamera(
+          CameraUpdate.newLatLngZoom(_deliveryLocation!, 15),
+        );
+        return;
+      }
+
       final bounds = LatLngBounds(
         southwest: LatLng(
           _currentLocation!.latitude < _deliveryLocation!.latitude
@@ -170,7 +182,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
         ),
       );
 
-      _mapController.animateCamera(
+      _mapController?.animateCamera(
         CameraUpdate.newLatLngBounds(bounds, 100),
       );
     }
@@ -242,7 +254,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                     onMapCreated: (controller) {
                       _mapController = controller;
                       if (_currentLocation != null) {
-                        _mapController.animateCamera(
+                        _mapController?.animateCamera(
                           CameraUpdate.newLatLngZoom(
                               _currentLocation!, 14),
                         );
@@ -510,7 +522,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
 
   @override
   void dispose() {
-    _mapController.dispose();
+    _mapController?.dispose();
     super.dispose();
   }
 }

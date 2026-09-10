@@ -49,19 +49,27 @@ class LocationService {
         throw Exception('Location permissions are permanently denied');
       }
 
-      // Get position
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
-      );
+      // Get position with fallback to last known position
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 12),
+        );
+      } catch (_) {
+        position = await Geolocator.getLastKnownPosition();
+      }
 
-      return LatLng(position.latitude, position.longitude);
+      if (position != null) {
+        return LatLng(position.latitude, position.longitude);
+      }
+      throw Exception('Could not fetch GPS location. Please ensure GPS is turned on.');
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Get address from LatLng
+  /// Get formatted address from LatLng
   Future<String?> getAddressFromLatLng(LatLng location) async {
     try {
       final placemarks = await placemarkFromCoordinates(
@@ -70,12 +78,39 @@ class LocationService {
       );
 
       if (placemarks.isNotEmpty) {
-        final place = placemarks[0];
-        return '${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}';
+        final place = placemarks.first;
+        final parts = <String>[];
+
+        void addPart(String? text) {
+          if (text != null && text.trim().isNotEmpty) {
+            final trimmed = text.trim();
+            if (!parts.any((p) => p.toLowerCase() == trimmed.toLowerCase())) {
+              parts.add(trimmed);
+            }
+          }
+        }
+
+        // Add street or name
+        if (place.street != null && place.street!.trim().isNotEmpty) {
+          addPart(place.street);
+        } else if (place.name != null && place.name!.trim().isNotEmpty) {
+          addPart(place.name);
+        }
+
+        addPart(place.subLocality);
+        addPart(place.locality);
+        addPart(place.subAdministrativeArea);
+        addPart(place.administrativeArea);
+        addPart(place.country);
+
+        if (parts.isNotEmpty) {
+          return parts.join(', ');
+        }
       }
-      return null;
+      return '${location.latitude.toStringAsFixed(5)}, ${location.longitude.toStringAsFixed(5)}';
     } catch (e) {
-      return null;
+      // Fallback to formatted coordinates string if offline or reverse geocode fails
+      return '${location.latitude.toStringAsFixed(5)}, ${location.longitude.toStringAsFixed(5)}';
     }
   }
 

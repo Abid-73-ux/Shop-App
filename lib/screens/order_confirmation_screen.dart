@@ -138,7 +138,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                      '\₹${item.totalPrice.toStringAsFixed(0)}',
+                                            'Rs${item.totalPrice.toStringAsFixed(0)}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium
@@ -174,7 +174,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                                   ),
                         ),
                         Text(
-                          '\₹${order.totalAmount.toStringAsFixed(0)}',
+                          'Rs${order.totalAmount.toStringAsFixed(0)}',
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium

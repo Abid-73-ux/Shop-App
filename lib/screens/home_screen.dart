@@ -252,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '\₹${product.price.toStringAsFixed(0)}',
+                                    'Rs${product.price.toStringAsFixed(0)}',
                                     style: const TextStyle(
                                       color: Colors.green,
                                       fontWeight: FontWeight.bold,

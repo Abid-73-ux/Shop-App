@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/order_model.dart';
+import 'order_tracking_screen.dart';
 
 class OrderConfirmationScreen extends StatelessWidget {
   final Order order;
@@ -247,6 +248,37 @@ class OrderConfirmationScreen extends StatelessWidget {
                         'Continue Shopping',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OrderTrackingScreen(
+                              orderId: order.id,
+                              deliveryAddress: order.deliveryAddress,
+                            ),
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        side: BorderSide(color: Colors.green.shade600),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'Track Order',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Colors.green.shade600,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
